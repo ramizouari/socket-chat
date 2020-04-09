@@ -48,8 +48,8 @@ public class ConnectionThread extends Thread  {
 
             // setting chat logic
             while (true){
-                String data  =  in.readLine();
-                if (data == null){
+                String data = in.readLine();
+                if (data == null) {
                     System.out.println("Connection ended with : " + name);
                     out.close();
                     in.close();
@@ -57,13 +57,14 @@ public class ConnectionThread extends Thread  {
                     this.connectionThreads.remove(this);
                     break;
                 }
-                MyColor.printBlue("spreading message from " +  this.name + " ::  " + data + "\n");
+                // internal log
+                System.out.println("## spreading message from " + this.name + " ::  " + data);
 
+                // sending msg to others
                 for (ConnectionThread e : connectionThreads) {
                     if (e != this)
-                        e.out.println( this.name + " >> " + data);
+                        e.out.println(this.name + " >> " + data);
                 }
-
             }
         } catch (IOException e) {
             e.printStackTrace();
