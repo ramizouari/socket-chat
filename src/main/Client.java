@@ -10,7 +10,7 @@ import java.util.Scanner;
 public class Client {
     public static void main(String [] arg)  {
         // init
-        Socket socket;
+        Socket socket = null;
         PrintWriter socketOut = null;
         BufferedReader socketIn = null;
         String name = "nonName";
@@ -37,28 +37,21 @@ public class Client {
         }
 
         // socket output listening thread
-        BufferedReader finalSocketIn = socketIn;
-        new Thread( () -> {
-            while (true) {
-                try {
-                    String data = finalSocketIn.readLine();
-                    if (data == null){
-                        System.out.println( MyColor.ANSI_RED + "connection broken");
-                        break;
-                    }
-                    MyColor.print(MyColor.ANSI_PURPLE, data + "\n");
-                } catch (IOException e) {
-                    e.printStackTrace();
-                    break;
-                }
-            }
-        }).start();
+        new ClientThread(socketIn).start();
 
         // send message to socket
-        while (true){
+        while (true) {
             String c = keyboard.nextLine();
-            if (c.equals("Quit"))
+            if (c.equals("Quit")) {
+                try {
+                    socket.close();
+                    socketIn.close();
+                    socketOut.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
                 break;
+            }
             socketOut.println(c);
         }
     }
