@@ -50,11 +50,15 @@ public class ConnectionThread extends Thread  {
             while (true){
                 String data = in.readLine();
                 if (data == null) {
-                    System.out.println("Connection ended with : " + name);
                     out.close();
                     in.close();
                     socket.close();
                     this.connectionThreads.remove(this);
+                    break;
+                } else if (data.equals("Quit")) {
+                    this.in.close();
+                    this.out.close();
+                    this.socket.close();
                     break;
                 }
                 // internal log
@@ -66,6 +70,7 @@ public class ConnectionThread extends Thread  {
                         e.out.println(this.name + " >> " + data);
                 }
             }
+            System.out.println("Connection ended with : " + name);
         } catch (IOException e) {
             e.printStackTrace();
         }

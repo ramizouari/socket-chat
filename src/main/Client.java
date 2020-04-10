@@ -42,17 +42,9 @@ public class Client {
         // send message to socket
         while (true) {
             String c = keyboard.nextLine();
-            if (c.equals("Quit")) {
-                try {
-                    socket.close();
-                    socketIn.close();
-                    socketOut.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                break;
-            }
             socketOut.println(c);
+            if (c.equals("Quit"))
+                break;
         }
     }
 }

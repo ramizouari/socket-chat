@@ -16,12 +16,12 @@ public class ClientThread extends Thread {
             try {
                 String data = in.readLine();
                 if (data == null) {
-                    System.out.println(MyColor.ANSI_RED + "connection ended");
+                    System.out.println(MyColor.ANSI_RED + "connection ended from server");
                     break;
                 }
                 MyColor.print(MyColor.ANSI_PURPLE, data + "\n");
             } catch (IOException e) {
-                System.out.println(MyColor.ANSI_RED + "connection ended");
+                System.out.println(MyColor.ANSI_RED + "connection ended with exception");
                 break;
             }
         }
