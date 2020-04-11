@@ -35,7 +35,7 @@ public class ConnectionThread extends Thread  {
             // getting other users name
 
             String names = connectionThreads.stream()
-                    .filter(e -> (e != null && e.name != null && !this.name.equals(e.name)))
+                    .filter(e -> this != e && e != null && e.name != null)
                     .map(e -> "\"" + e.name + "\"")
                     .collect(Collectors.joining(" et "));
 
