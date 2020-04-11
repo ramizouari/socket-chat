@@ -60,10 +60,10 @@ public class ConnectionThread extends Thread  {
                 System.out.println("## spreading message from " + this.name + " ::  " + data);
 
                 // sending msg to others
-                for (ConnectionThread e : connectionThreads) {
-                    if (e != this)
-                        e.out.println(this.name + " >> " + data);
-                }
+                connectionThreads.stream()
+                        .filter(e -> e != this)
+                        .forEach(e -> e.out.println(this.name + " >> " + data));
+
             }
             System.out.println("Connection ended with : " + name);
         } catch (Exception e) {
