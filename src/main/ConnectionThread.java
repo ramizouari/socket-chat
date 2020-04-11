@@ -1,11 +1,11 @@
 package main;
 
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.stream.Collectors;
 
 public class ConnectionThread extends Thread  {
     private ArrayList<ConnectionThread> connectionThreads;
@@ -25,42 +25,37 @@ public class ConnectionThread extends Thread  {
 
     @Override
     public void run(){
-        try{
+        try {
             // setting user name
             out.println("saisir votre Id : ");
-            name =  in.readLine();
-            System.out.println("Connection established with : "+ name );
+            name = in.readLine();
+            System.out.println("Connection established with : " + name);
 
 
             // getting other users name
-            String names = "" ;
-            for (ConnectionThread e : connectionThreads) {
-                if (e != null && e.name != null && !this.name.equals(e.name))
-                    names += " \" " + e.name + " \" et";
-            }
-            names = names.substring(0 , Math.max(names.length() -2 , 0));
+
+            String names = connectionThreads.stream()
+                    .filter(e -> (e != null && e.name != null && !this.name.equals(e.name)))
+                    .map(e -> "\"" + e.name + "\"")
+                    .collect(Collectors.joining(" et "));
+
 
             // printing the welcome message
             if (names.equals(""))
-                out.println("Server >> Bienvenue " +name+" vous êtes bien connectés");
+                out.println("Server >> Bienvenue " + name + " vous êtes bien connectés");
+            else if (!names.contains("et"))
+                out.println("Server >> Bienvenue " + name + " vous êtes bien connectés : " + names + " est aussi connectés");
             else
-                out.println("Server >> Bienvenue " +name+" vous êtes bien connectés : "+ names + " sont aussi connectés");
+                out.println("Server >> Bienvenue " + name + " vous êtes bien connectés : " + names + " sont aussi connectés");
 
             // setting chat logic
-            while (true){
+            while (true) {
                 String data = in.readLine();
-                if (data == null) {
-                    out.close();
-                    in.close();
-                    socket.close();
-                    this.connectionThreads.remove(this);
-                    break;
-                } else if (data.equals("Quit")) {
-                    this.in.close();
-                    this.out.close();
-                    this.socket.close();
+                if (data == null || data.equals("Quit")) {
+                    this.disconnect();
                     break;
                 }
+
                 // internal log
                 System.out.println("## spreading message from " + this.name + " ::  " + data);
 
@@ -71,8 +66,15 @@ public class ConnectionThread extends Thread  {
                 }
             }
             System.out.println("Connection ended with : " + name);
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    private void disconnect() throws Exception {
+        out.close();
+        in.close();
+        socket.close();
+        this.connectionThreads.remove(this);
     }
 }
